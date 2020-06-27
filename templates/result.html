@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Result!</title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='main.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='font.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="inner-container performance" style="height: 700px">
+            <div class="form-container performance" style="height: 50%;">
+                <div class="page-header" style=" padding: 0">
+                    The Vendor Performance is...
+                </div>
+                <div class="text-container">
+                    {{ value }}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

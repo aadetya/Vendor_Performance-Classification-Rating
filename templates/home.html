@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vendor Performance</title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='main.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='font.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="inner-container">
+            <form method="GET" action = "{{ url_for('prediction') }}" class="form-container">
+                <div class="page-header">
+                    Check Vendor Performance
+                </div>
+                <div class = "form-group">
+                    <label class="input-label" for="de" >Expected Delivery Date</label>
+                    <input type="date" id="de" name="de" required>
+                </div>
+                <div class = "form-group">
+                    <label class="input-label" for="dr">Received Date</label>
+                    <input type="date" id="dr" name="dr" required>
+                </div>  
+                <div class = "form-group">
+                    <label class="input-label" for="qd">Quantity Demanded </label>
+                    <input type="number" id="qd" name="qd" placeholder="Quantity Demanded" required>
+                </div>
+                <div class = "form-group">
+                    <label class="input-label" for="qr">Quantity Received </label>
+                    <input type="number" id="qr" name="qr" placeholder="Quantity Received" required>
+                </div>
+                <div class = "form-group " style="margin: 0">
+                    <label class="input-label" for="q_return">Quantity Returned </label>
+                    <input type="number" id="q_return" name="q_return" placeholder="Quantity Returned" required>
+                </div>
+                <div>
+                    <input class = "submit" type="submit" value="Submit">
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
