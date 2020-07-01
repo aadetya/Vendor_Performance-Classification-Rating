@@ -2,7 +2,8 @@ import pandas as pd
 import numpy as np
 #from numpy import linalg as LA
 from sklearn.preprocessing import MinMaxScaler
-#from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
+#from sklearn.ensemble import RandomForestRegressor, 
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.cluster import KMeans
 #import datetime as dt
