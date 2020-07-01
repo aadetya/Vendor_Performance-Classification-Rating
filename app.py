@@ -39,10 +39,25 @@ def prediction():
     except ZeroDivisionError:
         quality = 0
     #print(promptness, quantity, quality)
-    prediction = model.predict([[quantity, promptness, quality]])
-    my_dict = {0: 'Performing Vendor', 1: 'Non-performing Vendor: Quantity Issue', 2: 'Non-performing Vendor: Quality Issue', 3: 'Non-performing Vendor: Promptness Issue'}
+    #prediction = model.predict([[quantity, promptness, quality]])
+    label_dict = {}
+    test = [[[1,1,1]],[[0,1,1]],[[1,0,1]],[[1,1,0]]]
+    label_dict[clf.predict(test[0])[0]] = 'Performing'
+    label_dict[clf.predict(test[1])[0]] = 'Non-Performing: Issue with Quantity'
+    label_dict[clf.predict(test[2])[0]] = 'Non-Performing: Issue with Promptness'
+    label_dict[clf.predict(test[3])[0]] = 'Non-Performing: Issue with Quality'
+    #my_dict = {0: 'Performing Vendor', 1: 'Non-performing Vendor: Quantity Issue', 2: 'Non-performing Vendor: Quality Issue', 3: 'Non-performing Vendor: Promptness Issue'}
     #return("Anwer is " + str(*prediction))
-    return render_template("result.html", value = my_dict[int(*prediction)])
+    THRESHOLD = 0.25
+    l = [[quantity, promptness, quality]]
+    result_list = []
+    result = clf.predict_proba(l)[0]
+    for i in range(len(result)):
+        if result[i]>THRESHOLD:
+            result_list.append(label_dict[i])
+    if 'Performing' in result_list and len(result_list)>1:
+        result_list.remove('Performing')
+    return render_template("result.html", value = result_list)
 
 if __name__ == "__main__":
     app.run()
