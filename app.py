@@ -53,15 +53,15 @@ def prediction():
     #settings the labels correctly
     label_dict = {}
     test = [[[1,1,1]],[[0,1,1]],[[1,0,1]],[[1,1,0]]]
-    label_dict[clf.predict(test[0])[0]] = 'Performing'
-    label_dict[clf.predict(test[1])[0]] = 'Non-Performing: Issue with Quantity'
-    label_dict[clf.predict(test[2])[0]] = 'Non-Performing: Issue with Promptness'
-    label_dict[clf.predict(test[3])[0]] = 'Non-Performing: Issue with Quality'
+    label_dict['Performing'] = clf.predict(test[0])[0]
+    label_dict['quantity'] = clf.predict(test[1])[0]
+    label_dict['promptness'] = clf.predict(test[2])[0]
+    label_dict['quality'] = clf.predict(test[3])[0]
 
     result = clf.predict_proba([[quantity, promptness, quality]])[0]
     
-    new = [('quantity', result[1]), ('promptness', result[2]), ('quality', result[3])]
-    if final_score > 3:
+    new = [('quantity', result[label_dict['quantity']]), ('promptness', result[label_dict['promptness']]), ('quality', result[label_dict['quality']])]
+    if clf.predict([[quantity, promptness, quality]]) == label_dict['Performing']:
         answer = "Performing"
         new.sort(key = lambda x: x[1])
     else:
