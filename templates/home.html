@@ -6,7 +6,7 @@
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='main.css') }}">
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='font.css') }}">
 </head>
-<body>
+<body pageshow = "getMaxValue()">
     <div class="container">
         <div class="inner-container">
             <form method="GET" action = "{{ url_for('prediction') }}" class="form-container">
@@ -22,16 +22,16 @@
                     <input type="date" id="dr" name="dr" required>
                 </div>  
                 <div class = "form-group">
-                    <label class="input-label" for="qd">Quantity Demanded </label>
-                    <input type="number" id="qd" name="qd" placeholder="Quantity Demanded" required>
+                    <label class="input-label" for="qd" >Quantity Demanded </label>
+                    <input type="number" id="qd" name="qd" placeholder="Quantity Demanded" required min = 0>
                 </div>
                 <div class = "form-group">
-                    <label class="input-label" for="qr">Quantity Received </label>
-                    <input type="number" id="qr" name="qr" placeholder="Quantity Received" required>
+                    <label class="input-label" for="qr" >Quantity Received </label>
+                    <input type="number" id="qr" name="qr" placeholder="Quantity Received" required min = 0>
                 </div>
                 <div class = "form-group " style="margin: 0">
-                    <label class="input-label" for="q_return">Quantity Returned </label>
-                    <input type="number" id="q_return" name="q_return" placeholder="Quantity Returned" required>
+                    <label class="input-label" for="q_return" >Quantity Returned </label>
+                    <input type="number" id="q_return" name="q_return" placeholder="Quantity Returned" required min = 0>
                 </div>
                 <div>
                     <input class = "submit" type="submit" value="Submit">
@@ -39,5 +39,23 @@
             </form>
         </div>
     </div>
+
+    <script type="text/javascript">
+
+    	function getMaxValue() {
+    		var q_return = document.getElementById("q_return");
+			var qrValue = parseInt(document.getElementById("qr").value);
+    		q_return.setAttribute('max', qrValue);
+		}
+
+		// init once to set
+		getMaxValue()
+
+		// listen for changes
+
+		document.getElementById("qr").addEventListener('change', function(event) {
+		  	getMaxValue()
+		})
+    </script>
 </body>
 </html>
