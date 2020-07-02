@@ -32,9 +32,9 @@ def prediction():
     daydiff = (pd.to_datetime(de) - pd.to_datetime(dr)).days
     if daydiff > 0:
         daydiff = -daydiff/10
-    file = pd.read_csv('compiled.csv',usecols=['DeliveryTime','EnteredReceivedQuantity','QuantityDemandedFinal'])
-    file = file.append({'DeliveryTime': daydiff, 'EnteredReceivedQuantity': qr, 'QuantityDemandedFinal': qd}, ignore_index = True)
-    promptness = (daydiff - np.min(file['DeliveryTime']))/(np.max(file['DeliveryTime']) - np.min(file['DeliveryTime']))
+    file = pd.read_csv('compiled.csv',usecols=['AdjustedDeliveryTime','EnteredReceivedQuantity','QuantityDemandedFinal'])
+    file = file.append({'AdjustedDeliveryTime': daydiff, 'EnteredReceivedQuantity': qr, 'QuantityDemandedFinal': qd}, ignore_index = True)
+    promptness = (daydiff - np.min(file['AdjustedDeliveryTime']))/(np.max(file['AdjustedDeliveryTime']) - np.min(file['AdjustedDeliveryTime']))
     
     # scaling for quantity
     
