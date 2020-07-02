@@ -11,12 +11,12 @@
         <div class="inner-container performance" style="height: 700px">
             <div class="form-container performance" style="height: 50%;">
                 <div class="page-header" style=" padding: 0">
-                    The Vendor Performance is...
+                    The Vendor Performance is... <br>
+					{{ answer }}
                 </div>
                 <div class="text-container">
-                    {{ answer }} <br>
                     {% for i in range(0,3) %}
-                        {{ value[i][0] }} <br>
+                        {{ value[i][0] }} {{ value[i][1] }}{{ value2 }}<br>
                     {% endfor %}
                     Final Score {{rating}}
                 </div>
