@@ -1,5 +1,5 @@
 import pickle
-from flask import Flask, request, render_template, url_for
+from flask import Flask, request, render_template
 import pandas as pd
 import numpy as np
 
@@ -31,21 +31,18 @@ def prediction():
     
     daydiff = (pd.to_datetime(de) - pd.to_datetime(dr)).days
     if daydiff > 0:
-        daydiff = daydiff/10
+        daydiff = -daydiff/10
     file = pd.read_csv('compiled.csv',usecols=['DeliveryTime','EnteredReceivedQuantity','QuantityDemandedFinal'])
-    file = file.append({'DeliveryTime': daydiff}, ignore_index = True)
-    file['DeliveryTime'] = file['DeliveryTime'].apply(abs)
-    file['DeliveryTime'] = -file['DeliveryTime']
+    file = file.append({'DeliveryTime': daydiff, 'EnteredReceivedQuantity': qr, 'QuantityDemandedFinal': qd}, ignore_index = True)
     promptness = (daydiff - np.min(file['DeliveryTime']))/(np.max(file['DeliveryTime']) - np.min(file['DeliveryTime']))
     
     #scaling for quantity
     
     min = 1
     max = np.max(file['EnteredReceivedQuantity']/file['QuantityDemandedFinal'])
-    quantity = qr/qd
-    if qr>qd:
-        if qr/qd>max:
-            max = qr/qd
+    if qr <= qd:
+        quantity = qr/qd
+    else:
         quantity = 1-(((qr/qd)-min)/(max-min))
     
     #scaling for quality and check for quantity received is 0
@@ -54,53 +51,44 @@ def prediction():
         quality = 1 - q_return/qr
     except ZeroDivisionError:
         quality = 1
-    
-    ## OLD VERSION
-        #print(promptness, quantity, quality)
-        #prediction = model.predict([[quantity, promptness, quality]])
-        #my_dict = {0: 'Performing Vendor', 1: 'Non-performing Vendor: Quantity Issue', 2: 'Non-performing Vendor: Quality Issue', 3: 'Non-performing Vendor: Promptness Issue'}
-        #return("Anwer is " + str(*prediction))
-    
-    
-    ## NEW VERSION
-    
-    final_score = round((0.5*quality + 0.3*promptness + 0.2*quantity)*5,2)  # Rating of the vendor out 5; weights 0.5,0.3,0.2 for quality, qty, promptness
+   
+    if qr != 0:
+        final_score = round((0.5*quality + 0.3*promptness + 0.2*quantity)*5,2)  # Rating of the vendor out 5; weights 0.5,0.3,0.2 for quality, qty, promptness
+    else: # quality doesn't make sense if quantity received is zero
+        final_score = round((0.55*promptness + 0.45*quantity)*5, 2)
     
     #settings the labels correctly
-    label_dict = {}
-    test = [[[1,1,1]],[[0,1,1]],[[1,0,1]],[[1,1,0]]]
-    label_dict['Performing'] = clf.predict(test[0])[0]
-    label_dict['quantity'] = clf.predict(test[1])[0]
-    label_dict['promptness'] = clf.predict(test[2])[0]
-    label_dict['quality'] = clf.predict(test[3])[0]
+    # label_dict = {}
+    # test = [[[1,1,1]],[[0,1,1]],[[1,0,1]],[[1,1,0]]]
+    # label_dict['Performing'] = clf.predict(test[0])[0]
+    # label_dict['quantity'] = clf.predict(test[1])[0]
+    # label_dict['promptness'] = clf.predict(test[2])[0]
+    # label_dict['quality'] = clf.predict(test[3])[0]
     
     #probablitlites for quntity, promptness and quality of given input
 
-    result = clf.predict_proba([[quantity, promptness, quality]])[0]
+    # result = clf.predict_proba([[quantity, promptness, quality]])[0]
     
-    new = [['Issue with Quantity is ', result[label_dict['quantity']]], ['Issue with Promptness is ', result[label_dict['promptness']]], ['Issue with Quality is ', result[label_dict['quality']]]]
-    if clf.predict([[quantity, promptness, quality]]) == label_dict['Performing']:
+    #new = [['Quantity', round(result[label_dict['quantity']], 2)], ['Promptness', round(result[label_dict['promptness']], 2)], ['Quality', round(result[label_dict['quality']], 2)]]
+    new = [['Quantity', round(quantity, 2)], ['Promptness', round(promptness, 2)], ['Quality', round(quality, 2)]]
+    if qr == 0:
+        new.pop()
+        
+    if clf.predict([[quantity, promptness, quality]]) == clf.predict([[1,1,1]]):
         answer = "Performing"
-        new.sort(key = lambda x: x[1])
+        new.sort(key = lambda x: x[1], reverse = True)
     else:
         answer = "Non-performing"
-        new.sort(key = lambda x: x[1], reverse = True)
-    for i in range(0,3):
-        new[i][1]=round(new[i][1]*100,2)
-    return render_template("result.html", answer = answer, value = new, rating = str(final_score)+' out of 5', value2='%')
-    
-# THRESHOLD = 0.25
-#     l = [[quantity, promptness, quality]]
-#     result_list = []
-#     result = clf.predict_proba(l)[0]
-#     factor_ratings = [quantity, promptness, quality]
+        if qr == 0:
+            new[0][1] = 0.0
+        new.sort(key = lambda x: x[1])
 
-#     for i in range(len(result)):
-#         if result[i]>THRESHOLD:
-#             result_list.append(label_dict[i])
-#     if 'Performing' in result_list and len(result_list)>1:
-#         result_list.remove('Performing')
-#     return render_template("result.html", value = result_list)
+    # print(quantity, promptness, quality)
+    # print(*result)
+    print(new)
+    
+    return render_template("result.html", answer = answer, value = new, rating = str(final_score), length = len(new))
+
 
 if __name__ == "__main__":
     app.run()
