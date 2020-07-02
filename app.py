@@ -38,7 +38,15 @@ def prediction():
     file['DeliveryTime'] = -file['DeliveryTime']
     promptness = (daydiff - np.min(file['DeliveryTime']))/(np.max(file['DeliveryTime']) - np.min(file['DeliveryTime']))
     
+    #scaling for quantity
+    
+    min = 1
+    max = np.max(file['EnteredReceivedQuantity']/file['QuantityDemandedFinal'])
     quantity = qr/qd
+    if qr>qd:
+        if qr/qd>max:
+            max = qr/qd
+        quantity = 1-(((qr/qd)-min)/(max-min))
     
     #scaling for quality and check for quantity received is 0
     
