@@ -6,10 +6,10 @@
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='main.css') }}">
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='font.css') }}">
 </head>
-<body pageshow = "getMaxValue()">
+<body>
     <div class="container">
         <div class="inner-container">
-            <form method="GET" action = "{{ url_for('prediction') }}" class="form-container">
+            <form id = "myForm" method="GET" action = "{{ url_for('prediction') }}" class="form-container">
                 <div class="page-header">
                     Check Vendor Performance
                 </div>
@@ -52,7 +52,6 @@
 		getMaxValue()
 
 		// listen for changes
-
 		document.getElementById("qr").addEventListener('change', function(event) {
 		  	getMaxValue()
 		})
